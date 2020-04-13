@@ -24,6 +24,8 @@
     var EMPTY=0, SNAKE=1, FRUIT=2;
     // DIRECTIONS
     var LEFT=0, UP=1, RIGHT=2, DOWN=3;
+    //keyCodes
+    var KEY_LEFT=37, KEY_UP=38, KEY_RIGHT=39, KEY_DOWN=40;
     //
     var grid={
       height:null,
@@ -100,7 +102,13 @@
       ctx=canvas.getContext("2d");
       document.body.appendChild(canvas);
       frames=0;
-      keyState={}
+      keyState={};
+      document.addEventListener("keydown", function (evt) {
+        keyState[evt.keyCode]=true;
+      })
+      document.addEventListener("keyup", function (evt) {
+        delete keyState[evt.keyCode];
+      })
       //
       // initial state
       init();
@@ -128,6 +136,11 @@
     }
     function update (arguments) {
       frames++;
+
+      if(keyState[KEY_LEFT]) snake.dir = LEFT;
+      if(keyState[KEY_UP]) snake.dir = UP;
+      if(keyState[KEY_RIGHT]) snake.dir = RIGHT;
+      if(keyState[KEY_DOWN]) snake.dir = DOWN;
 
       // every 5 frames
       if ( frames%5===0 ) {
