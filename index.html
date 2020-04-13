@@ -93,7 +93,7 @@
 
 
     // Game Objects
-    var canvas, ctx, frames, keyState;
+    var canvas, ctx, frames, keyState, score;
 
     function main (arguments) {
       canvas = document.createElement('canvas');
@@ -101,6 +101,7 @@
       canvas.height=ROWS*20;
       ctx=canvas.getContext("2d");
       document.body.appendChild(canvas);
+      ctx.font="12px Helvetica"
       frames=0;
       keyState={};
       document.addEventListener("keydown", function (evt) {
@@ -116,7 +117,10 @@
       loop();
     }
 
-    function init (arguments) {
+    function init () {
+      // reset stuff
+      frames=0;
+      score=0
       grid.init(EMPTY, COLS, ROWS)
       // start position of snake
       var sp= {x:Math.floor(COLS/2),y:ROWS-1}
@@ -166,11 +170,14 @@
             break;
         }
         // out of bounds of grid
-        if ( 0> nx || nx> grid.width-1 || 
-             0> ny || ny> grid.height-1) {
-          // reboot game
-          return init();
-        }
+        // if ( 0> nx || nx> grid.width-1 || 
+        //      0> ny || ny> grid.height-1) {
+        //   // reboot game
+        //   return init();
+        // }
+        // have snake wrap around grid
+        nx = 0 > nx ? grid.width - 1 : nx % grid.width;
+        ny = 0 > ny ? grid.height - 1 : ny % grid.height;
         // if snake hitself
         if( grid.get(nx,ny)===SNAKE){
           return init();
@@ -180,6 +187,7 @@
           // create new snake el
           var tail = {x:nx, y:ny}
           // and update new fruit item
+          score++
           setFood();
           //
         } else {
@@ -225,10 +233,22 @@
 
         }
       }
+      // score 
+      ctx.fillStyle="#000";
+
+      ctx.fillText("SCORE: "+score, 10, canvas.height-10);
+
     }
 
     // start game
     main();
+
+    /* Note 1 
+
+    "keystate" is just an normal javascript object/hex table I use to store all keys that are pressed :). Think of each key as an integer index in an array, where the value of the element at that index determine the state of the key. If it exist (I just set the element at the keycode index to true in the "keydown" eventlistener) then that means the key is pressed. Likewise, if the element dosen't exist (we delete the element in the "keyup" eventlistener") then that will return false when we look it up. So when I write "if (keystate[KEY_LEFT]) { //do stuff };" then we just look at the index "37" (stored in the variable "KEY_LEFT") and check whether that element exist or not.
+    I think they use a similar technic in this blogpost: http://nokarma.org/2011/02/27/javascript-game-development-keyboard-input/
+    If you wanna know more keycodes then this post is great for reference: http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes 
+    */
   </script>
 </body>
 </html>
