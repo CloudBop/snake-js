@@ -137,10 +137,10 @@
     function update (arguments) {
       frames++;
 
-      if(keyState[KEY_LEFT]) snake.dir = LEFT;
-      if(keyState[KEY_UP]) snake.dir = UP;
-      if(keyState[KEY_RIGHT]) snake.dir = RIGHT;
-      if(keyState[KEY_DOWN]) snake.dir = DOWN;
+      if(keyState[KEY_LEFT] && snake.dir !== RIGHT) snake.dir = LEFT;
+      if(keyState[KEY_UP] && snake.dir !== DOWN ) snake.dir = UP;
+      if(keyState[KEY_RIGHT] && snake.dir !== LEFT ) snake.dir = RIGHT;
+      if(keyState[KEY_DOWN] && snake.dir !== UP) snake.dir = DOWN;
 
       // every 5 frames
       if ( frames%5===0 ) {
