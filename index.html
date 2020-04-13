@@ -3,9 +3,152 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snake</title>
+  <title> Simple Snake Game </title>
 </head>
 <body>
-  
+  <script>
+    var COLS=26, ROWS=26;
+    // IDs
+    var EMPTY=0, SNAKE=1, FRUIT=2;
+    // DIRECTIONS
+    var LEFT=0, UP=1, RIGHT=2, DOWN=3;
+    //
+    var grid={
+      height:null,
+      width:null,
+      _grid: null,
+      init: function (d,c,r) {
+        this.width=c;
+        this.height=r;
+        this._grid=[];
+        // create 2d grid
+        for (let x = 0; x < c; x++) {
+          this._grid.push([]);
+          for (let j = 0; j < r; j++) {
+            this._grid[x].push(d)
+          }
+        }
+        //
+      },
+      set: function(val, x, y ){
+        this._grid[x][y] = val;
+      },
+      get: function(x,y){
+        return this._grid[x][y]
+      }
+    }
+
+    var snake= {
+      dir: null,
+      _queue: null,
+      last: null,
+      //
+      init: function(d,x,y){
+        this.dir=d;
+        this._queue=[]
+        this.insert(x,y)
+      },
+      //
+      insert: function(x,y){
+        // inserts at begging
+        this._queue.unshift({x:x,y:y})
+        this.last=this._queue[0]
+      },
+      // 
+      remove: function(){
+        return this._queue.pop();
+      }
+    }
+    // places food onto empty grid
+    function setFood () {
+      var empty=[];
+      // loop through grid
+      for (let x = 0; x < grid.width; x++) {
+        for (let y = 0; y < grid.height; y++) {
+          // store all empty coords
+          if ( grid.get(x,y)===EMPTY) {
+            empty.push({x:x,y:y})
+          }
+        }
+      }
+      // return one of the random items in the empty array
+      var randomPos = empty[Math.floor(Math.random()*empty.length)]
+      // set new fruit
+      grid.set(FRUIT, randomPos.x, randomPos.y)
+    }
+
+
+    // Game Objects
+    var canvas, ctx, frames, keyState;
+
+    function main (arguments) {
+      canvas = document.createElement('canvas');
+      canvas.width=COLS*20;
+      canvas.height=ROWS*20;
+      ctx=canvas.getContext("2d");
+      document.body.appendChild(canvas);
+      frames=0;
+      keyState={}
+      //
+      // initial state
+      init();
+      // rerender
+      loop();
+    }
+
+    function init (arguments) {
+      grid.init(EMPTY, COLS, ROWS)
+      // start position of snake
+      var sp= {x:Math.floor(COLS/2),y:ROWS-1}
+      // snakes init state
+      snake.init(UP, sp.x,sp.y)
+      // set snake in grid
+      grid.set(SNAKE, sp.x, sp.y)
+      //
+      setFood();
+    }
+
+    function loop(){
+      update()
+      draw()
+      //
+      window.requestAnimationFrame(loop, canvas)
+    }
+    function update (arguments) {
+      frames++
+    }
+
+    function draw (arguments) {
+      // tilewidth
+      var tw = canvas.width/grid.width;
+      // tileHeight
+      var th = canvas.height/grid.height;
+      // loop through grid
+      for (let x = 0; x < grid.width; x++) {
+        for (let y = 0; y < grid.height; y++) {
+          //
+          switch (grid.get(x,y)) {
+            case EMPTY:
+              ctx.fillStyle= "#fff"
+              break;
+            case SNAKE:
+              ctx.fillStyle= "#00f"
+              break;
+            case FRUIT:
+              ctx.fillStyle= "#f00"
+              break;
+            default:
+              console.log('something went wrong')
+              break;
+          }
+          ctx.fillRect(x*tw, y*th, tw, th)
+
+        }
+      }
+    }
+
+    // start game
+    main();
+  </script>
 </body>
 </html>
