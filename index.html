@@ -127,7 +127,49 @@
       window.requestAnimationFrame(loop, canvas)
     }
     function update (arguments) {
-      frames++
+      frames++;
+
+      // every 5 frames
+      if ( frames%5===0 ) {
+        // new x pos
+        var nx = snake.last.x;
+        var ny = snake.last.y;
+        //
+        switch (snake.dir) {
+          case LEFT:
+            nx--
+            break;
+          case UP:
+            ny--
+            break;
+          case RIGHT:
+            nx++
+            break;
+          case DOWN:
+            ny++
+            break;
+        
+          default:
+            break;
+        }
+        // out of bounds of grid
+        if ( 0> nx || nx> grid.width-1 || 
+             0> ny || ny> grid.height-1) {
+          // reboot game
+          return init();
+        }
+        // removes+returns last x,y of snake array
+        var tail = snake.remove();
+        // empty the tail pos
+        grid.set(EMPTY, tail.x, tail.y);
+        // new pos
+        tail.x=nx
+        tail.y=ny
+        //
+        grid.set(SNAKE, tail.x, tail.y);
+        //
+        snake.insert(tail.x, tail.y)
+      }
     }
 
     function draw (arguments) {
