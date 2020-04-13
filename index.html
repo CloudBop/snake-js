@@ -171,13 +171,26 @@
           // reboot game
           return init();
         }
-        // removes+returns last x,y of snake array
-        var tail = snake.remove();
-        // empty the tail pos
-        grid.set(EMPTY, tail.x, tail.y);
-        // new pos
-        tail.x=nx
-        tail.y=ny
+        // if snake hitself
+        if( grid.get(nx,ny)===SNAKE){
+          return init();
+        }
+        //
+        if( grid.get(nx,ny)===FRUIT){
+          // create new snake el
+          var tail = {x:nx, y:ny}
+          // and update new fruit item
+          setFood();
+          //
+        } else {
+          // removes+returns last x,y of snake array
+          var tail = snake.remove();
+          // empty the tail pos
+          grid.set(EMPTY, tail.x, tail.y);
+          // new pos
+          tail.x=nx
+          tail.y=ny
+        }
         //
         grid.set(SNAKE, tail.x, tail.y);
         //
